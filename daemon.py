@@ -72,6 +72,7 @@ db = plyvel.DB('/box/blkchn_plgrnd_v10', create_if_missing=True)
 log.info('DB Loaded')
 
 #0 => 185044 => 1:38am to 2:20pm => roughly 13hours
+#0 => 19:54
 block = int(db.get('last-height', 0))
 log = log.bind(block=block)
 log.info('Starting loop')
@@ -122,4 +123,4 @@ while 1:
 
         db.put('last-height', str(block))
         block += 1
-        log = log.bind(block=block, tx=tx['txid'])
+        log = log.bind(block=block)
