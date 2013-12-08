@@ -14,6 +14,24 @@ It relies on the standard **bitcoind** daemon and communicate with JSON RPC.
 - Monitor transactions on any Bitcoin address
 - Query history for any Bitcoin address
 
+## Requirements
+
+- [LevelDB](https://code.google.com/p/leveldb/)/[plyvel](https://github.com/wbolster/plyvel)
+- [gevent](http://www.gevent.org/)
+- https://github.com/gerold-penz/python-jsonrpc
+
+## Installation
+
+You must first install [LevelDB](https://code.google.com/p/leveldb/).
+
+```console
+sudo apt-get install libleveldb1 libleveldb-dev
+```
+
+```console
+$ pip install bunch
+```
+
 ## Donation
 
 BTC 1PVvwmhs8rEfUpVYxWdBVk5DyZ15ZJDjPT
