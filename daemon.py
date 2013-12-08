@@ -72,7 +72,7 @@ db = plyvel.DB('/box/blkchn_plgrnd_v10', create_if_missing=True)
 log.info('DB Loaded')
 
 #0 => 185044 => 1:38am to 2:20pm => roughly 13hours
-#0 => 19:54
+#last run => 21:34
 block = int(db.get('last-height', 0))
 log = log.bind(block=block)
 log.info('Starting loop')
@@ -121,6 +121,6 @@ while 1:
                     # Store at which block height the tx is spent
                     wb.put('{}-txo-spent!{}!{}'.format(txin_addr, txin['txid'], txin['vout']), str(block))
 
-        db.put('last-height', str(block))
-        block += 1
-        log = log.bind(block=block)
+    db.put('last-height', str(block))
+    block += 1
+    log = log.bind(block=block).unbind('tx')

@@ -25,7 +25,7 @@ It relies on the standard **bitcoind** daemon and communicate with JSON RPC.
 You must first install [LevelDB](https://code.google.com/p/leveldb/).
 
 ```console
-sudo apt-get install libleveldb1 libleveldb-dev
+$ sudo apt-get install libleveldb1 libleveldb-dev
 ```
 
 ```console
