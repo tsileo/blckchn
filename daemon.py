@@ -22,20 +22,23 @@ GENESIS_TX = '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
 
 def get_block(block_height):
     """ Return the list of transactions (Tx) for the given block height. """
+    if block_height > http_client.getblockcount():
+        return None
+
     txlist = []
 
-    try:
-        b = http_client.getblockhash(block_height)
-        blkdata = http_client.getblock(b)
-    except HTTPError:
-        return None
+    b = http_client.getblockhash(block_height)
+    blkdata = http_client.getblock(b)
 
     for tx in blkdata['tx']:
         try:
             if tx == GENESIS_TX:
-                # Hard coded the first tx of the genesis block is not available with bitcoind RPC API
-                txlist.append({'txid': tx, 'in': [], 'out': [{'addr': '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-                                                              'value': 5000000000}]})
+                # Hard coded the first tx of the genesis block
+                # because it's not available with bitcoind RPC API
+                txlist.append({'txid': tx,
+                               'in': [],
+                               'out': [{'addr': '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+                                        'value': 5000000000}]})
                 continue
             txdata = http_client.getrawtransaction(tx, 1)
             if txdata:
@@ -43,7 +46,8 @@ def get_block(block_height):
                 txins = []
                 for _in in txdata['vin']:
                     if 'txid' in _in:
-                        txins.append({'txid': _in['txid'], 'vout': _in['vout']})
+                        txins.append({'txid': _in['txid'],
+                                      'vout': _in['vout']})
                     # TODO handle coinbase
                 for out in txdata['vout']:
                     if out['scriptPubKey']['type'] == 'pubkeyhash' or out['scriptPubKey']['type'] == 'pubkey':
@@ -53,15 +57,17 @@ def get_block(block_height):
                                'out': txouts,
                                'in': txins})
         except Exception, exc:
-            print exc, tx
+            log.exception(exc)
 
-    return {'block_index': block_height, 'block_time': blkdata['time'], 'tx': txlist}
+    return {'block_index': block_height,
+            'block_time': blkdata['time'],
+            'tx': txlist}
 
 import plyvel
 
 log.info('Starting...')
 
-db = plyvel.DB('/box/___blkchn_plgrnd', create_if_missing=True)
+db = plyvel.DB('/box/blkchn_plgrnd_v10', create_if_missing=True)
 
 log.info('DB Loaded')
 
@@ -69,13 +75,13 @@ log.info('DB Loaded')
 block = int(db.get('last-height', 0))
 log = log.bind(block=block)
 log.info('Starting loop')
+
 while 1:
     log.info('Processing new block')
-    block_cnt = http_client.getblockcount()
     b = get_block(block)
     if not b:
         time.sleep(10)
-        break
+        continue
     # Enumerate over all the TXs
     for tx in b['tx']:
         log = log.bind(block=block, tx=tx['txid'])
