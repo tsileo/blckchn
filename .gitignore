@@ -1,0 +1,5 @@
+.fuse*
+*.pyc
+test*.py
+*_bak.py
+*.log*
