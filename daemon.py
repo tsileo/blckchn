@@ -3,6 +3,7 @@ from collections import defaultdict
 from urllib2 import HTTPError
 import time
 import os
+import ujson as json
 
 import pyjsonrpc
 import logging
@@ -19,6 +20,11 @@ http_client = pyjsonrpc.HttpClient(
 
 GENESIS_TX = '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
 
+JSON_DUMP = True
+JSON_DUMP_DIR = '/box/blockchain_json'
+
+
+""" Last start: 14 december @ 10:04 AM """
 
 def get_block(block_height):
     """ Return the list of transactions (Tx) for the given block height. """
@@ -29,6 +35,10 @@ def get_block(block_height):
 
     b = http_client.getblockhash(block_height)
     blkdata = http_client.getblock(b)
+
+    if JSON_DUMP:
+        with open(os.path.join(JSON_DUMP_DIR, 'block_{0}.json'.format(block_height)), 'wb') as jf:
+            jf.write(json.dumps(blkdata))
 
     for tx in blkdata['tx']:
         try:
@@ -41,6 +51,11 @@ def get_block(block_height):
                                         'value': 5000000000}]})
                 continue
             txdata = http_client.getrawtransaction(tx, 1)
+
+            if JSON_DUMP:
+                with open(os.path.join(JSON_DUMP_DIR, 'tx_{0}.json'.format(tx)), 'wb') as jf:
+                    jf.write(json.dumps(txdata))
+
             if txdata:
                 txouts = []
                 txins = []
@@ -67,12 +82,10 @@ import plyvel
 
 log.info('Starting...')
 
-db = plyvel.DB('/box/blkchn_plgrnd_v10', create_if_missing=True)
+db = plyvel.DB('/box/blkchn_plgrnd_v60', create_if_missing=True)
 
 log.info('DB Loaded')
 
-#0 => 185044 => 1:38am to 2:20pm => roughly 13hours
-#last run => 21:34
 block = int(db.get('last-height', 0))
 log = log.bind(block=block)
 log.info('Starting loop')

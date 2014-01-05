@@ -1,13 +1,12 @@
 # BLCKCHN
 
+** /!\ Development stopped in favor of [btcplex](https://github.com/tsileo/btcplex), a full rewrite in Go /!\ **
+
 Blckchn is an open source [Bitcoin](http://bitcoin.org/en/) [block chain](https://en.bitcoin.it/wiki/Block_chain) API/explorer.
 
 It allows you to retrieve a [Blockchain](http://blockchain.info/)-like transactions history for any address.
 
 It relies on the standard **bitcoind** daemon and communicate with JSON RPC.
-
-**Work in progress**: It's still a draft, but under active development.
-
 
 ## Features
 
@@ -32,9 +31,10 @@ $ sudo apt-get install libleveldb1 libleveldb-dev
 ```
 
 ```console
-$ pip install bunch
+$ pip install bunch # Needed for pyjsonrpc
 ```
 
+Last run it takes 24 hours to go from block #0 to block #191257 (9.1GB)
 
 ## Donation
 

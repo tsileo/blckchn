@@ -1,7 +1,10 @@
 # coding: utf-8
 import plyvel
 
-db = plyvel.DB('/box/___blkchn_plgrnd', create_if_missing=True)
+#'/box/___blkchn_plgrnd'
+
+db = plyvel.DB('/work/opensource/blockchain_playground_golang/tmpdat2', create_if_missing=True)
+print "DBLOADED"
 
 
 class BitcoinAddress(object):
@@ -21,7 +24,7 @@ class BitcoinAddress(object):
                            block_time=int(db.get('{}-txo-time!{}!{}'.format(self.addr, txid, txindex))),
                            block_height=int(db.get('{}-txo-block!{}!{}'.format(self.addr, txid, txindex))))
             in_data['outs'].append((key.split('!')[0].replace('-txo', ''), int(value)))
-            for key2, value2 in db.iterator(start='{0}-txo-in!{1}!'.format(ad, txid), stop='{0}-txo-in!{1}!\xff'.format(ad, txid)):
+            for key2, value2 in db.iterator(start='{0}-txo-in!{1}!'.format(self.addr, txid), stop='{0}-txo-in!{1}!\xff'.format(self.addr, txid)):
                 in_data['ins'].append(value2)  # value2 => btc address
             in_data['result'] += int(value)
             in_data['result2'] += int(value)
@@ -59,7 +62,7 @@ class BitcoinAddress(object):
         balance = 0
         for key, value in db.iterator(start='{0}-txo!'.format(self.addr),
                                       stop='{0}-txo!\xff'.format(self.addr)):
-            spent = int(db.get('{0}-txo-spent!{1}!{2}'.format(ad, key.split('!')[-2], key.split('!')[-1])))
+            spent = int(db.get('{0}-txo-spent!{1}!{2}'.format(self.addr, key.split('!')[-2], key.split('!')[-1])))
             if unspent and spent == 0:
                 balance += int(value)
             elif not unspent:
@@ -69,3 +72,5 @@ class BitcoinAddress(object):
     @classmethod
     def lastheight(cls):
         return int(db.get('last-height'))
+
+btca = BitcoinAddress('1HU2CZEhnT72fVhsTc1YKdWCmwh5ikVnyw')
