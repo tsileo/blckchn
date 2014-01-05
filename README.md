@@ -1,6 +1,6 @@
 # BLCKCHN
 
-** /!\ Development stopped in favor of [btcplex](https://github.com/tsileo/btcplex), a full rewrite in Go /!\ **
+**Development stopped in favor of [btcplex](https://github.com/tsileo/btcplex), a full rewrite in Go.**
 
 Blckchn is an open source [Bitcoin](http://bitcoin.org/en/) [block chain](https://en.bitcoin.it/wiki/Block_chain) API/explorer.
 
